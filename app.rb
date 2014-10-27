@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'mongo'
+require 'slim'
 require 'json/ext'
 
 include Mongo
@@ -8,6 +9,14 @@ configure do
   conn = MongoClient.new("localhost", 27017)
   set :mongo_connection, conn
   set :mongo_db, conn.db("conafor")
+end
+
+get '/' do
+  slim :index
+end
+
+get '/templates/*.html' do |name|
+  slim name.to_sym, layout: false
 end
 
 get '/hello' do
@@ -24,3 +33,4 @@ get '/:estado/:municipio' do
 
   settings.mongo_db['listados'].find(query).to_a.to_json
 end
+
