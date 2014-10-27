@@ -15,10 +15,6 @@ get '/' do
   slim :index
 end
 
-get '/templates/*.html' do |name|
-  slim name.to_sym, layout: false
-end
-
 get '/hello' do
   "Hello World!"
 end
