@@ -12,8 +12,12 @@ conaforApp.config(function($routeProvider) {
     });
 });
 
-conaforApp.controller('mainCtrl', function($scope) {
-  $scope.message = 'Yolo Swag';
+conaforApp.controller('mainCtrl', function($scope, $http) {
+  $http.get('/JALISCO/Amacueca')
+    .success(function(data, status, headers, config) {
+      $scope.entries = data;
+    }).error(function(data, status, headers, config) {
+    });
 });
 
 conaforApp.controller('aboutCtrl', function($scope) {

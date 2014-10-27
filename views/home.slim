@@ -1,2 +1,9 @@
-h1.cover-heading
-  | {{message}}
+table.table.table-striped
+  th Tipo Apoyo
+  th Municipio
+  tr ng-repeat="entry in entries"
+    td
+      | {{entry.inegi_id}}
+    td
+      | {{entry.tipo_apoyo}}
+      
