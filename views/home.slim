@@ -1,2 +1,10 @@
-h1.cover-heading
-  | {{message}}
+table.table.table-hover
+  th Tipo Apoyo
+  th Municipio
+  tbody
+    tr ng-repeat="entry in entries"
+      td
+        | {{entry.inegi_id}}
+      td
+        | {{entry.tipo_apoyo}}
+      
