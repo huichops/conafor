@@ -1,9 +1,9 @@
-table.table.table-striped
+table.table.table-hover
   th Tipo Apoyo
   th Municipio
-  tr ng-repeat="entry in entries"
-    td
-      | {{entry.inegi_id}}
-    td
-      | {{entry.tipo_apoyo}}
-      
+  tbody
+    tr ng-repeat="entry in entries"
+      td
+        | {{entry.inegi_id}}
+      td
+        | {{entry.tipo_apoyo}}
