@@ -23,14 +23,27 @@ get '/hello' do
   "Hello World!"
 end
 
-get '/:estado/:municipio' do
+get '/total_solicitado' do
+  settings.mongo_db['listados'] 
+  .aggregate([ 
+    { "$group" => {
+      _id: { 
+        code: "$code"
+      },
+      total_solicitado: {
+        "$sum" => "$monto_solicitado"
+      }
+    }}
+  ]).to_a.to_json
+end
+
+get '/:estado' do
   content_type :json
 
   query = {}
   query[:estado] = params[:estado]
-  query[:municipio] = params[:municipio]
   p query
 
-  settings.mongo_db['listados'].find(query).to_a.to_json
+  settings.mongo_db['listados'].find(query).limit(100).to_a.to_json
 end
 
