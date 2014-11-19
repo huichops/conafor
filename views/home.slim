@@ -1,9 +1,28 @@
+form.form-inline
+  div.form-group
+    label for="estado" Estado
+    select.form-control#estado
+      option AGUASCALIENTES
+      option OAXACA
+      option CHIAPAS
+  label for="year" Año
+  div.form-group#year
+    select.form-control
+      option 2011
+      option 2012
+      option 2013
+
+
+h1 Montos Solicitados
 table.table.table-hover
   th Tipo Apoyo
   th Municipio
+  th monto Solicitado
   tbody
     tr ng-repeat="entry in entries"
       td
-        | {{entry.inegi_id}}
-      td
         | {{entry.tipo_apoyo}}
+      td
+        | {{entry.municipio}}
+      td
+        | {{entry.monto_solicitado}}
