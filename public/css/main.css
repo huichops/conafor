@@ -1,0 +1,26 @@
+.navbar-brand,
+.navbar-nav li a {
+  line-height: 100px;
+  height: 100px;
+  padding-top: 0;
+}
+
+div.tip {   
+  position: absolute;           
+  text-align: center;           
+  width: 150px;                  
+  padding: 2px;             
+  font-size: 100%;     
+  border: 1px;      
+  border-radius: 8px;           
+  pointer-events: none;         
+  background-color: #FEFEFE;
+  box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.2);
+}   
+
+.tip p {
+  color: #555;
+}
+.container {
+  margin: 0 20px;
+}
