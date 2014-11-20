@@ -37,7 +37,7 @@ get '/total_solicitado' do
   ]).to_a.to_json
 end
 
-get '/summary/:code' do
+get '/total_solicitado/summary/:code' do
   p params[:code]
   settings.mongo_db['listados'] 
   .aggregate([ 
