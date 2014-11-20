@@ -11,6 +11,7 @@ html ng-app="conaforApp"
     script src="/js/angular/angular.min.js"
     script src="/js/angular-route/angular-route.min.js"
     script src="/js/script.js"
+    script src="/js/directives.js"
     title CONAFOR
   body
     header
@@ -22,13 +23,13 @@ html ng-app="conaforApp"
           div.navbar-collapse.collapse
             ul.nav.navbar-nav.navbar-right
               li
-                a href="#"
-                  i.fa.fa-home Home
+                a href="#eje1"
+                  i.fa.fa-home Eje 1
               li
-                a href="#about"
-                  i.fa.fa-shield About
+                a href="#eje2"
+                  i.fa.fa-shield Eje 2
               li
                 a href="#contact"
-                  i.fa.fa-comment Contact
+                  i.fa.fa-comment Acerca De
     div.container#main 
       == yield
