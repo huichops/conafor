@@ -3,13 +3,8 @@ div.panel.panel-success
     h4
       | {{estado}}
   table.table.table-hover
-    tr
+    tr ng-repeat="result in results"
       td.active
-        | Promedio
+        | {{result.show}}
       td
-        | {{avg}}
-    tr
-      td.active
-        | Total
-      td
-        | {{total}}
+        | {{result.value}}
