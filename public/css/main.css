@@ -24,3 +24,7 @@ div.tip {
 .container {
   margin: 0 20px;
 }
+
+.panel-heading > h4 {
+  color: white;
+}

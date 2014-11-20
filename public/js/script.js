@@ -7,6 +7,14 @@ angular.module('d3', [])
 
 conaforApp = angular.module('conaforApp', ['ngRoute', 'd3']);
 
+conaforApp.directive('summary', function($http) {
+  return {
+    restrict: 'EA',
+    replace: false,
+    templateUrl: '/templates/summary.html'
+  }
+});
+
 conaforApp.directive('map', function($http) {
     return {
       restrict: 'EA',
@@ -91,7 +99,7 @@ conaforApp.directive('map', function($http) {
             })
 
             .on('click', function(d, i) {
-              return scope.onClick({item: d});
+              return scope.onClick({item: d.properties});
             });
           }).error(function(data, status, headers, config) {
             // yolo
@@ -125,13 +133,25 @@ conaforApp.controller('aboutCtrl', function($scope, $http) {
 });
 
 conaforApp.controller('mainCtrl', function($scope, $http) {
-  $scope.response = 'yolo';
-  $scope.message = 'Total solicitado';
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+  $scope.estado = 'Selecciona un estado';
+  $scope.message = 'Montos Solicitados';
   $scope.date = '2010 - 2014';
 
   $scope.onClick = function(item) {
     $scope.$apply(function() {
-      $scope.response = Math.random()*500;
+      $http.get('/summary/' + item.state_code)
+      .success(function(data, status, headers, config) {
+        $scope.estado = item.state_name;
+        console.log(data);
+        $scope.avg = numberWithCommas('$' + data.avg.toFixed());
+        $scope.total = numberWithCommas('$' + data.total.toFixed());
+      }).error(function(data, status, headers, config) {
+        $scope.response = 'Error al cargar';
+        //yolo
+      });
     });
   };
 });

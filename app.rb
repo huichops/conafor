@@ -37,6 +37,25 @@ get '/total_solicitado' do
   ]).to_a.to_json
 end
 
+get '/summary/:code' do
+  p params[:code]
+  settings.mongo_db['listados'] 
+  .aggregate([ 
+    { "$match" => {
+      code: params[:code].to_i
+    }},
+    { "$group" => {
+      _id: "$code",
+      total: {
+        "$sum" => "$monto_solicitado"
+      },
+      avg: {
+        "$avg" => "$monto_solicitado"
+      }
+    }}
+  ]).to_a.first.to_json
+
+end
 get '/:estado' do
   content_type :json
 
