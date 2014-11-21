@@ -23,9 +23,9 @@ get '/hello' do
   "Hello World!"
 end
 
-get '/cantidad_solicitado' do
-  settings.mongo_db['listados'] 
-  .aggregate([ 
+get '/cantidad_solicitado/*' do |year|
+
+  query = [ 
     { "$group" => {
       _id: { 
         code: "$code"
@@ -37,7 +37,17 @@ get '/cantidad_solicitado' do
     { "$sort" => {
       cantidad: 1
     }}
-  ]).to_a.to_json
+  ]
+
+  unless year.nil?
+   query.unshift({ "$match" => {
+      fecha: params[:year]
+    }})
+  end
+
+  settings.mongo_db['listados'] 
+  .aggregate(query).to_a.to_json
+
 end
 
 get '/cantidad_solicitado/summary/:code' do
@@ -75,6 +85,35 @@ get '/total_solicitado' do
   ]).to_a.to_json
 end
 
+get '/total_solicitado/?:year?' do
+
+  query = [ 
+    { "$group" => {
+      _id: { 
+        code: "$code"
+      },
+      total: {
+        "$sum" => "$monto_solicitado"
+      },
+      promedio: {
+        "$avg" => "$monto_solicitado"
+      }
+    }},
+    { "$sort" => {
+      promedio: 1
+    }}
+  ]
+
+  unless params[:year].nil?
+   query.unshift({ "$match" => {
+      fecha: params[:year].to_i
+    }})
+  end
+
+  settings.mongo_db['listados'] 
+  .aggregate(query).to_a.to_json
+
+end
 get '/total_solicitado/summary/:code' do
   p params[:code]
   settings.mongo_db['listados'] 

@@ -61,11 +61,11 @@ conaforApp.directive('map', function($http) {
           console.dir(data);
 
           var colors = ['#FFF57E', '#FFDC7E', '#FFCB80', '#FFA97E', '#FF807E'];
-          var range = d3.range(first, last, diff / (colors.length-1));
-          console.dir(range);
+          var range = d3.range(first, last-1, diff / (colors.length-1));
           var color = d3.scale.threshold()
           .domain(range)
           .range(colors);
+          console.log(range);
 
           var projection = d3.geo.mercator()
               .scale(1350)

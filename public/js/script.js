@@ -64,16 +64,18 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) { $scope.estado = 'Sel
     });
   };
 
-  $scope.monto = function() {
+  $scope.monto = function(year) {
+    console.log(year);
     reset();
     $scope.fields = [
       { name: 'avg', show: 'Promedio' },
       { name: 'total', show: 'Total' }
     ];
     $scope.url = '/total_solicitado';
-    $scope.field = 'promedio';
+    $scope.field = 'total';
+    year = year || '';
 
-    $http.get('/total_solicitado')
+    $http.get($scope.url + '/' + year)
     .success(function(data, status, headers, config) {
       $scope.data = data;
     })
@@ -82,7 +84,13 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) { $scope.estado = 'Sel
     });
   };
 
+  $scope.year = function(year) {
+    reset();
+  };
+
   $scope.field = 'cantidad';
+
+
   $scope.onClick = function(item) {
     $scope.$apply(function() {
 
