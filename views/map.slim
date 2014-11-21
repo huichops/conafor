@@ -1,12 +1,32 @@
 div.btn-group 
   button.btn.btn-success.dropdown-toggle type='button' data-toggle='dropdown' aria-expanded='false'
+    | Tipo
+    span.caret
+  ul.dropdown-menu#tipo-filter role='menu'
+    li
+      a(ng-click='monto()' href) Todos 
+    li ng-repeat='tipo in tipos'
+      a(ng-click='monto("tipo", tipo)' href) 
+        | {{tipo}}
+div.btn-group 
+  button.btn.btn-success.dropdown-toggle type='button' data-toggle='dropdown' aria-expanded='false'
+    | Sexo
+    span.caret
+  ul.dropdown-menu#year-filter role='menu'
+    li
+      a(ng-click='monto()' href) Todos 
+    li ng-repeat='sexo in sexos'
+      a(ng-click='monto("sexo", sexo)' href) 
+        | {{sexo}}
+div.btn-group 
+  button.btn.btn-success.dropdown-toggle type='button' data-toggle='dropdown' aria-expanded='false'
     | Año
     span.caret
-  ul.dropdown-menu role='menu'
+  ul.dropdown-menu#year-filter role='menu'
     li
       a(ng-click='monto()' href) Todos 
     li ng-repeat='year in years'
-      a(ng-click='monto(year)' href) 
+      a(ng-click='monto("fecha", year)' href) 
         | {{year}}
 h1
   | {{message}}

@@ -25,7 +25,7 @@ end
 
 get '/get_domain/:field' do
   settings.mongo_db['listados'] 
-  .distinct(params[:field]).to_json
+  .distinct(params[:field]).sort.to_json
 end
 
 get '/cantidad_solicitado/*' do |year|
@@ -33,7 +33,8 @@ get '/cantidad_solicitado/*' do |year|
   query = [ 
     { "$group" => {
       _id: { 
-        code: "$code"
+        code: "$code",
+        region: "$region"
       },
       cantidad: {
         "$sum" => 1
@@ -73,24 +74,48 @@ get '/cantidad_solicitado/summary/:code' do
   ]).to_a.first.to_json
 end
 
-get '/total_solicitado' do
-  settings.mongo_db['listados'] 
-  .aggregate([ 
+get '/total_solicitado/summary/:code/*.*' do
+  name = params[:splat].first
+  value = params[:splat].last
+
+  query = [ 
+    { "$match" => {
+      code: params[:code].to_i
+    }},
     { "$group" => {
       _id: { 
-        code: "$code"
+        code: "$code" 
+      },
+      total: {
+        "$sum" => "$monto_solicitado"
       },
       promedio: {
         "$avg" => "$monto_solicitado"
+      },
+      cantidad: {
+        "$sum" => 1
       }
     }},
     { "$sort" => {
-      total_solicitado: 1
+      total: 1
     }}
-  ]).to_a.to_json
+  ]
+
+  unless name == 'none'
+    name = name.to_i == 0? name : name.to_i
+    query.unshift({ "$match" => {
+      name.to_sym => value
+    }})
+  end
+
+  settings.mongo_db['listados'] 
+  .aggregate(query).to_a.first.to_json
 end
 
-get '/total_solicitado/?:year?' do
+get '/total_solicitado/*.*' do
+
+  name = params[:splat].first
+  value = params[:splat].last
 
   query = [ 
     { "$group" => {
@@ -102,45 +127,25 @@ get '/total_solicitado/?:year?' do
       },
       promedio: {
         "$avg" => "$monto_solicitado"
+      },
+      cantidad: {
+        "$sum" => 1
       }
     }},
     { "$sort" => {
-      total: 1
+      cantidad: 1
     }}
   ]
 
-  unless params[:year].nil?
-   query.unshift({ "$match" => {
-      fecha: params[:year].to_i
+  unless name == 'none'
+    name = name.to_i == 0? name : name.to_i
+    query.unshift({ "$match" => {
+      name.to_sym => value
     }})
   end
 
   settings.mongo_db['listados'] 
   .aggregate(query).to_a.to_json
-
-end
-
-get '/total_solicitado/summary/:code' do
-  p params[:code]
-  settings.mongo_db['listados'] 
-  .aggregate([ 
-    { "$match" => {
-      code: params[:code].to_i
-    }},
-    { "$group" => {
-      _id: "$code",
-      total: {
-        "$sum" => "$monto_solicitado"
-      },
-      cantidad: {
-        "$sum" => 1
-      },
-      avg: {
-        "$avg" => "$monto_solicitado"
-      }
-    }}
-  ]).to_a.first.to_json
-
 end
 
 get '/:estado' do

@@ -36,13 +36,28 @@ conaforApp.controller('aboutCtrl', function($scope, $http) {
   });
 });
 
-conaforApp.controller('eje1Ctrl', function($scope, $http) { $scope.estado = 'Selecciona un estado';
+conaforApp.controller('eje1Ctrl', function($scope, $http) { 
+  $scope.estado = 'Selecciona un estado';
   function reset() {
       $scope.estado = 'Selecciona un estado';
       $scope.results.length = 0;
   }
   $scope.message = 'Total solicitado';
   $scope.date = '2009 - 2013';
+  $http.get('/get_domain/sexo')
+  .success(function(data, status, headers, config) {
+    $scope.sexos = data;
+  })
+  .error(function(data, status, headers, config) {
+    console.log('DAMN');
+  });
+  $http.get('/get_domain/tipo')
+  .success(function(data, status, headers, config) {
+    $scope.tipos = data;
+  })
+  .error(function(data, status, headers, config) {
+    console.log('DAMN');
+  });
   $http.get('/get_domain/fecha')
   .success(function(data, status, headers, config) {
     $scope.years = data;
@@ -50,6 +65,7 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) { $scope.estado = 'Sel
   .error(function(data, status, headers, config) {
     console.log('DAMN');
   });
+
   // [ WARNING
   // IS ONLY FOR NUMERIC FIELDS !!
   $scope.results = [];
@@ -65,27 +81,34 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) { $scope.estado = 'Sel
     $http.get('/cantidad_solicitado')
     .success(function(data, status, headers, config) {
       $scope.data = data;
+      /*$timeout(function() {
+        angular.element('#year-filter').trigger('click');
+      });*/
     })
     .error(function(data, status, headers, config) {
       console.log('DAMN');
     });
   };
 
-  $scope.monto = function(year) {
-    console.log(year);
+  $scope.monto = function(name, val) {
     reset();
     $scope.fields = [
       { name: 'cantidad', show: 'Cantidad' },
-      { name: 'avg', show: 'Promedio' },
+      { name: 'promedio', show: 'Promedio' },
       { name: 'total', show: 'Total' }
     ];
     $scope.url = '/total_solicitado';
-    $scope.field = 'total';
-    year = year || '';
+    $scope.field = 'cantidad';
+    name = name || 'none';
+    val = val || 'none';
 
-    if (!year) $scope.date = '2009 - 2013';
-    else $scope.date = year;
-    $http.get($scope.url + '/' + year)
+    $scope.filter = name;
+    $scope.filter_val = val;
+
+    if ( name == 'fecha' && !val ) $scope.date = '2009 - 2013';
+    else $scope.date = val;
+
+    $http.get($scope.url + '/' + name + '.'  + val)
     .success(function(data, status, headers, config) {
       $scope.data = data;
     })
@@ -94,24 +117,25 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) { $scope.estado = 'Sel
     });
   };
 
-  $scope.year = function(year) {
-    reset();
-  };
-
-  $scope.field = 'cantidad';
-
-
   $scope.onClick = function(item) {
     $scope.$apply(function() {
 
-      $http.get($scope.url + '/summary/' + item.state_code)
+      console.log($scope.filter, $scope.filter_val);
+      $http.get($scope.url + '/summary/' + item.state_code + '/' + $scope.filter + '.' + $scope.filter_val)
       .success(function(data, status, headers, config) {
         $scope.results.length = 0;
         $scope.estado = item.state_name;
+          
         angular.forEach($scope.fields, function(value, key) {
+          if(data[value.name]) {
+            withCommas = numberWithCommas(data[value.name].toFixed());
+          } else {
+            withCommas = 0;
+          }
+            
           $scope.results.push({
               show: value.show, 
-              value: numberWithCommas(data[value.name].toFixed()) 
+              value: withCommas
           });
         });
         /*$scope.avg = numberWithCommas('$' + data.avg.toFixed());
@@ -122,4 +146,5 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) { $scope.estado = 'Sel
       });
     });
   };
+  $scope.monto();
 });
