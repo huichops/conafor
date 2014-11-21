@@ -23,6 +23,41 @@ get '/hello' do
   "Hello World!"
 end
 
+get '/cantidad_solicitado' do
+  settings.mongo_db['listados'] 
+  .aggregate([ 
+    { "$group" => {
+      _id: { 
+        code: "$code"
+      },
+      cantidad: {
+        "$sum" => 1
+      }
+    }},
+    { "$sort" => {
+      cantidad: 1
+    }}
+  ]).to_a.to_json
+end
+
+get '/cantidad_solicitado/summary/:code' do
+  p params[:code]
+  settings.mongo_db['listados'] 
+  .aggregate([ 
+    { "$match" => {
+      code: params[:code].to_i
+    }},
+    { "$group" => {
+      _id: {
+        code: "$code"
+      },
+      total: {
+        "$sum" => 1
+      }
+    }}
+  ]).to_a.first.to_json
+end
+
 get '/total_solicitado' do
   settings.mongo_db['listados'] 
   .aggregate([ 
@@ -30,9 +65,12 @@ get '/total_solicitado' do
       _id: { 
         code: "$code"
       },
-      total_solicitado: {
-        "$sum" => "$monto_solicitado"
+      promedio: {
+        "$avg" => "$monto_solicitado"
       }
+    }},
+    { "$sort" => {
+      total_solicitado: 1
     }}
   ]).to_a.to_json
 end

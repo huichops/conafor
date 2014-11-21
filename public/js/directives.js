@@ -1,3 +1,24 @@
+function calcThreshold(array, field, step) {
+  var amount,
+      domain = [], 
+      max = 0,
+      min = 999999999;
+
+  step = step || 5;
+
+  array.forEach(function(elem) {
+    var current = elem[field];
+    max = max >= current ? max : current; 
+    min = min <= current ? min : current; 
+  });
+
+  amount = (max-min) / step;
+
+  for (var i = 1; i <= step; i++) {
+    domain.push(amount * i);
+  }
+  return domain;
+}
 conaforApp.directive('summary', function($http) {
   return {
     restrict: 'EA',
@@ -29,15 +50,22 @@ conaforApp.directive('map', function($http) {
         scope.render = function(data) {
         
           svg.selectAll('*').remove();
-          console.log(data);
           if (!data) return;
 
+          var field = scope.$parent.field;
+          var first = data[0][field];
+          var last = data[data.length-1][field];
+          var diff = last - first;
+          console.log(field);
+          console.log(first, last, diff);
+          console.dir(data);
 
-
-          var color_domain = ['300', '600', '900', '1300'];
+          var colors = ['#FFF57E', '#FFDC7E', '#FFCB80', '#FFA97E', '#FF807E'];
+          var range = d3.range(first, last, diff / (colors.length-1));
+          console.dir(range);
           var color = d3.scale.threshold()
-          .domain(color_domain)
-          .range( ['#FFF57E', '#FFDC7E', '#FFCB80', '#FFA97E', '#FF807E'] );
+          .domain(range)
+          .range(colors);
 
           var projection = d3.geo.mercator()
               .scale(1350)
@@ -58,14 +86,12 @@ conaforApp.directive('map', function($http) {
           
 
           function build_map(err, mx) {
-            scope.data.forEach(function(d) {
-              mount_by_code[d._id.code] = (d.total_solicitado / 1000000);
+            data.forEach(function(d) {
+              mount_by_code[d._id.code] = (d[field]);
             });
 
             var states = topojson.feature(mx, mx.objects.states).features;
-            console.log(states);
             if (err) return console.error(err);
-            console.log(mx);
 
             svg.append('g')
             .selectAll('path')
@@ -74,7 +100,7 @@ conaforApp.directive('map', function($http) {
             .attr('d', path)
             .attr('state-click', true)
             .style('stroke', '#555')
-            .style('opacity', 0.6)
+            .style('opacity', 0.8)
             .style('fill', function(d) {
               return color(mount_by_code[d.properties.state_code]);
             })
@@ -86,9 +112,6 @@ conaforApp.directive('map', function($http) {
               .style('top', (d3.event.pageY - 55) + 'px');
 
               title.text(d.properties.state_name);
-              var amount = (mount_by_code[d.properties.state_code]).toFixed();
-
-              content_div.text(amount + ' MDP');
             })
 
             .on('mousemove', function(d) {

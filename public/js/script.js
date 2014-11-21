@@ -17,7 +17,7 @@ conaforApp.config(function($routeProvider) {
       controller: 'eje1Ctrl'
     })
     .when('/eje2', {
-      templateUrl: '/templates/map2.html',
+      templateUrl: '/templates/map.html',
       controller: 'eje2Ctrl'
     })
     .when('/', {
@@ -36,63 +36,64 @@ conaforApp.controller('aboutCtrl', function($scope, $http) {
   });
 });
 
-conaforApp.controller('eje2Ctrl', function($scope, $http) {
-  $scope.estado = 'Selecciona un estado';
-  $scope.message = 'Produccion Maderable';
-  $scope.date = '2010 - 2014';
-
-  $http.get('/maderable')
-  .success(function(data, status, headers, config) {
-    $scope.data = data;
-  })
-  .error(function(data, status, headers, config) {
-    console.log('DAMN');
-  });
-
-  $scope.onClick = function(item) {
-    $scope.$apply(function() {
-
-      $http.get('/maderable/summary/' + item.state_code)
-      .success(function(data, status, headers, config) {
-        $scope.estado = item.state_name;
-        $scope.avg = numberWithCommas('$' + data.avg.toFixed());
-        $scope.total = numberWithCommas('$' + data.total.toFixed());
-      })
-      .error(function(data, status, headers, config) {
-        $scope.response = 'Error al cargar';
-      });
-    });
-  };
-});
-
-conaforApp.controller('eje1Ctrl', function($scope, $http) {
-  $scope.estado = 'Selecciona un estado';
+conaforApp.controller('eje1Ctrl', function($scope, $http) { $scope.estado = 'Selecciona un estado';
+  function reset() {
+      $scope.estado = 'Selecciona un estado';
+      $scope.results.length = 0;
+  }
   $scope.message = 'Total solicitado';
   $scope.date = '2010 - 2014';
-  $scope.fields = [
-    { name: 'avg', show: 'Promedio' },
-    { name: 'total', show: 'Total' }
-  ];
+  // [ WARNING
+  // IS ONLY FOR NUMERIC FIELDS !!
   $scope.results = [];
 
-  $http.get('/total_solicitado')
-  .success(function(data, status, headers, config) {
-    $scope.data = data;
-  })
-  .error(function(data, status, headers, config) {
-    console.log('DAMN');
-  });
+  $scope.count = function() {
+    reset();
+    $scope.fields = [
+      { name: 'total', show: 'Total' }
+    ];
+    $scope.url = '/cantidad_solicitado';
+    $scope.field = 'cantidad';
+    
+    $http.get('/cantidad_solicitado')
+    .success(function(data, status, headers, config) {
+      $scope.data = data;
+    })
+    .error(function(data, status, headers, config) {
+      console.log('DAMN');
+    });
+  };
 
+  $scope.monto = function() {
+    reset();
+    $scope.fields = [
+      { name: 'avg', show: 'Promedio' },
+      { name: 'total', show: 'Total' }
+    ];
+    $scope.url = '/total_solicitado';
+    $scope.field = 'promedio';
+
+    $http.get('/total_solicitado')
+    .success(function(data, status, headers, config) {
+      $scope.data = data;
+    })
+    .error(function(data, status, headers, config) {
+      console.log('DAMN');
+    });
+  };
+
+  $scope.field = 'cantidad';
   $scope.onClick = function(item) {
     $scope.$apply(function() {
 
-      $http.get('/total_solicitado/summary/' + item.state_code)
+      $http.get($scope.url + '/summary/' + item.state_code)
       .success(function(data, status, headers, config) {
+        $scope.results.length = 0;
         $scope.estado = item.state_name;
         angular.forEach($scope.fields, function(value, key) {
           $scope.results.push({
               show: value.show, 
-              value: numberWithCommas('$' + data[value.name].toFixed()) 
+              value: numberWithCommas(data[value.name].toFixed()) 
           });
         });
         /*$scope.avg = numberWithCommas('$' + data.avg.toFixed());

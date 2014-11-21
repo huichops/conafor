@@ -23,13 +23,18 @@ html ng-app="conaforApp"
           div.navbar-collapse.collapse
             ul.nav.navbar-nav.navbar-right
               li
-                a href="#eje1"
-                  i.fa.fa-home Eje 1
+                a.bg-info href="#eje1"
+                  span
+                    i.eje-1.glyphicon.glyphicon-globe
+                  | Eje 1
+                  
               li
-                a href="#eje2"
-                  i.fa.fa-shield Eje 2
+                a.bg-warning href="#eje2"
+                  span
+                    i.glyphicon.glyphicon-globe
+                  | Eje 2 
               li
-                a href="#contact"
-                  i.fa.fa-comment Acerca De
+                a href="#"
+                  i.glyphicon.glyphicon-th-list Listado
     div.container#main 
       == yield
