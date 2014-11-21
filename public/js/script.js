@@ -105,7 +105,7 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) {
     $scope.filter = name;
     $scope.filter_val = val;
 
-    if ( name == 'fecha' && !val ) $scope.date = '2009 - 2013';
+    if ( val == 'none' ) $scope.date = 'General';
     else $scope.date = val;
 
     $http.get($scope.url + '/' + name + '.'  + val)

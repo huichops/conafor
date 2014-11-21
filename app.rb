@@ -84,7 +84,8 @@ get '/total_solicitado/summary/:code/*.*' do
     }},
     { "$group" => {
       _id: { 
-        code: "$code" 
+        code: "$code",
+        region: "$region"
       },
       total: {
         "$sum" => "$monto_solicitado"
@@ -102,7 +103,7 @@ get '/total_solicitado/summary/:code/*.*' do
   ]
 
   unless name == 'none'
-    name = name.to_i == 0? name : name.to_i
+    value  = value.to_i == 0? value : value.to_i
     query.unshift({ "$match" => {
       name.to_sym => value
     }})
@@ -120,7 +121,8 @@ get '/total_solicitado/*.*' do
   query = [ 
     { "$group" => {
       _id: { 
-        code: "$code"
+        code: "$code",
+        region: "$region"
       },
       total: {
         "$sum" => "$monto_solicitado"
@@ -138,7 +140,7 @@ get '/total_solicitado/*.*' do
   ]
 
   unless name == 'none'
-    name = name.to_i == 0? name : name.to_i
+    value  = value.to_i == 0? value : value.to_i
     query.unshift({ "$match" => {
       name.to_sym => value
     }})
