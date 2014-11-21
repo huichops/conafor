@@ -1,25 +1,13 @@
 div.btn-group 
-  button.btn.btn-default.dropdown-toggle type='button' data-toggle='dropdown' aria-expanded='false'
+  button.btn.btn-success.dropdown-toggle type='button' data-toggle='dropdown' aria-expanded='false'
     | Año
     span.caret
   ul.dropdown-menu role='menu'
     li
       a(ng-click='monto()' href) Todos 
-    li
-      a(ng-click='monto(2010)' href) 2010
-    li
-      a(ng-click='monto(2011)' href) 2011
-    li
-      a(ng-click='monto(2012)' href) 2012
-    li
-      a(ng-click='monto(2013)' href) 2013
-    li
-      a(ng-click='monto(2014)' href) 2014
-ol.breadcrumb
-  li 
-    button ng-click="count()" count
-  li 
-    button ng-click="monto()" monto
+    li ng-repeat='year in years'
+      a(ng-click='monto(year)' href) 
+        | {{year}}
 h1
   | {{message}}
   strong

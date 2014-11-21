@@ -42,7 +42,14 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) { $scope.estado = 'Sel
       $scope.results.length = 0;
   }
   $scope.message = 'Total solicitado';
-  $scope.date = '2010 - 2014';
+  $scope.date = '2009 - 2013';
+  $http.get('/get_domain/fecha')
+  .success(function(data, status, headers, config) {
+    $scope.years = data;
+  })
+  .error(function(data, status, headers, config) {
+    console.log('DAMN');
+  });
   // [ WARNING
   // IS ONLY FOR NUMERIC FIELDS !!
   $scope.results = [];
@@ -68,6 +75,7 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) { $scope.estado = 'Sel
     console.log(year);
     reset();
     $scope.fields = [
+      { name: 'cantidad', show: 'Cantidad' },
       { name: 'avg', show: 'Promedio' },
       { name: 'total', show: 'Total' }
     ];
@@ -75,6 +83,8 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) { $scope.estado = 'Sel
     $scope.field = 'total';
     year = year || '';
 
+    if (!year) $scope.date = '2009 - 2013';
+    else $scope.date = year;
     $http.get($scope.url + '/' + year)
     .success(function(data, status, headers, config) {
       $scope.data = data;

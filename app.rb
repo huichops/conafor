@@ -23,6 +23,11 @@ get '/hello' do
   "Hello World!"
 end
 
+get '/get_domain/:field' do
+  settings.mongo_db['listados'] 
+  .distinct(params[:field]).to_json
+end
+
 get '/cantidad_solicitado/*' do |year|
 
   query = [ 
@@ -100,7 +105,7 @@ get '/total_solicitado/?:year?' do
       }
     }},
     { "$sort" => {
-      promedio: 1
+      total: 1
     }}
   ]
 
@@ -114,6 +119,7 @@ get '/total_solicitado/?:year?' do
   .aggregate(query).to_a.to_json
 
 end
+
 get '/total_solicitado/summary/:code' do
   p params[:code]
   settings.mongo_db['listados'] 
@@ -126,6 +132,9 @@ get '/total_solicitado/summary/:code' do
       total: {
         "$sum" => "$monto_solicitado"
       },
+      cantidad: {
+        "$sum" => 1
+      },
       avg: {
         "$avg" => "$monto_solicitado"
       }
@@ -133,6 +142,7 @@ get '/total_solicitado/summary/:code' do
   ]).to_a.first.to_json
 
 end
+
 get '/:estado' do
   content_type :json
 
