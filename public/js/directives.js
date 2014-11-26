@@ -58,6 +58,11 @@ conaforApp.directive('map', function($http) {
           var diff = last - first;
           console.log(first, last, diff);
 
+          var stroke_colors = ['#EEEEEE', '#13E140', '#00C22B', '#00881E', '#006115', '#022B0B'];
+          var stroke_color = d3.scale.linear() 
+          .domain([0, 1, 2, 3, 4, 5, 6])
+          .range(stroke_colors);
+
           var colors = ['#FFF57E', '#FFDC7E', '#FFCB80', '#FFA97E', '#FF807E'];
           var range = d3.range(first, last, diff / (colors.length-1));
           var color_domain = range.slice(0);
@@ -92,7 +97,7 @@ conaforApp.directive('map', function($http) {
           function build_map(err, mx) {
             data.forEach(function(d) {
               mount_by_code[d._id.code] = (d[field]);
-              region_by_code[d._id.code] = d._id.region || 'otra';
+              region_by_code[d._id.code] = d._id.region;
             });
 
             var states = topojson.feature(mx, mx.objects.states).features;
@@ -103,11 +108,15 @@ conaforApp.directive('map', function($http) {
             .data(states)
             .enter().append('path')
             .attr('d', path)
+            .attr('stroke-width', 1)
             .attr('state-click', true)
-            .style('stroke', '#555')
             .style('opacity', 0.8)
+            .style('stroke', 'black')
+          //  .style('stroke', function(d) {
+           //   return stroke_color(region_by_code[d.properties.state_code]);
+            //})
             .style('fill', function(d) {
-              return color(mount_by_code[d.properties.state_code]);
+              return stroke_color(region_by_code[d.properties.state_code]);
             })
 
             .on('mouseover', function(d) {
@@ -132,6 +141,7 @@ conaforApp.directive('map', function($http) {
             })
 
             .on('click', function(d, i) {
+              d.properties.region = region_by_code[d.properties.state_code];
               return scope.onClick({item: d.properties});
             });
           }
