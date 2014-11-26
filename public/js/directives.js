@@ -118,9 +118,12 @@ conaforApp.directive('map', function($http) {
             .style('fill', function(d) {
               return stroke_color(region_by_code[d.properties.state_code]);
             })
+            .attr('class', function(d) {
+              return 'region-' + region_by_code[d.properties.state_code];
+            })
 
             .on('mouseover', function(d) {
-              d3.select(this).transition().duration(300).style('opacity', 1);
+              d3.selectAll('.region-' + region_by_code[d.properties.state_code]).transition().duration(300).style('opacity', 1);
               div.transition().duration(300).style('opacity', 1)
               .style('left', (d3.event.pageX + 10) + 'px')
               .style('top', (d3.event.pageY - 55) + 'px');
@@ -136,7 +139,7 @@ conaforApp.directive('map', function($http) {
             })
 
             .on('mouseout', function(d) {
-              d3.select(this).transition().duration(300).style('opacity', 0.8);
+              d3.selectAll('.region-' + region_by_code[d.properties.state_code]).transition().duration(300).style('opacity', 0.8);
               div.transition().duration(300).style('opacity', 0);
             })
 

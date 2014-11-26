@@ -234,11 +234,10 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) {
     $scope.$apply(function() {
 
       console.log($scope.filter, $scope.filter_val);
-      $http.get($scope.url + '/summary/' + item.state_code + '/' + $scope.filter + '.' + $scope.filter_val)
+      $http.get($scope.url + '/summary/' + item.region + '/' + $scope.filter + '.' + $scope.filter_val)
       .success(function(data, status, headers, config) {
         $scope.results.length = 0;
         $scope.estado = 'Region: ' + item.region;
-        console.log($scope.estado);
           
         angular.forEach($scope.fields, function(value, key) {
           if (data[value.name]) {

@@ -80,7 +80,7 @@ get '/total_solicitado/summary/:code/*.*' do
 
   query = [ 
     { "$match" => {
-      code: params[:code].to_i
+      region: params[:code].to_i
     }},
     { "$group" => {
       _id: { 
