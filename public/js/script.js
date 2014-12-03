@@ -65,6 +65,13 @@ conaforApp.controller('eje2Ctrl', function($scope, $http) {
   .error(function(data, status, headers, config) {
     console.log('DAMN');
   });
+  $http.get('/get_domain/')
+  .success(function(data, status, headers, config) {
+    $scope.tipos = data;
+  })
+  .error(function(data, status, headers, config) {
+    console.log('DAMN');
+  });
 
   // [ WARNING
   // IS ONLY FOR NUMERIC FIELDS !!
@@ -157,6 +164,10 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) {
   }
   $scope.message = 'Total solicitado';
   $scope.date = '2009 - 2013';
+  $http.get('/get_domain/grupo_tipo_apoyo')
+  .success(function(data, status, headers, config) {
+    $scope.grupos = data;
+  })
   $http.get('/get_domain/sexo')
   .success(function(data, status, headers, config) {
     $scope.sexos = data;

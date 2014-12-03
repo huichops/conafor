@@ -58,17 +58,22 @@ conaforApp.directive('map', function($http) {
           var diff = last - first;
           console.log(first, last, diff);
 
-          var stroke_colors = ['#EEEEEE', '#13E140', '#00C22B', '#00881E', '#006115', '#022B0B'];
+          //var stroke_colors = ['#EEEEEE', '#13E140', '#00C22B', '#00881E', '#006115', '#022B0B'];
+          var stroke_colors = ['#EEEEEE', '#FFF57E', '#FFDC7E', '#FFCB80', '#FFA97E', '#FF807E'];
+          var stroke_range = [0, 1, 2, 3 ,4, 5 ,6];
+          var color_domain = stroke_range;
+          var legend_labels = ['Otra', 'Norte', 'Centro-Occidente', 'Centro-Oriente', 'Sur', 'Sureste', 'Noreste'];
+
           var stroke_color = d3.scale.linear() 
-          .domain([0, 1, 2, 3, 4, 5, 6])
+          .domain(stroke_range)
           .range(stroke_colors);
 
           var colors = ['#FFF57E', '#FFDC7E', '#FFCB80', '#FFA97E', '#FF807E'];
           var range = d3.range(first, last, diff / (colors.length-1));
-          var color_domain = range.slice(0);
-          var legend_labels = range.slice(0);
-          legend_labels[0] += ' -';
-          legend_labels[legend_labels.length-1] += ' +';
+//          var color_domain = range.slice(0);
+//          var legend_labels = range.slice(0);
+//          legend_labels[0] += ' -';
+//          legend_labels[legend_labels.length-1] += ' +';
 
           var color = d3.scale.threshold()
           .domain(range)
@@ -97,7 +102,7 @@ conaforApp.directive('map', function($http) {
           function build_map(err, mx) {
             data.forEach(function(d) {
               mount_by_code[d._id.code] = (d[field]);
-              region_by_code[d._id.code] = d._id.region;
+              region_by_code[d._id.code] = d._id;
             });
 
             var states = topojson.feature(mx, mx.objects.states).features;
@@ -110,26 +115,26 @@ conaforApp.directive('map', function($http) {
             .attr('d', path)
             .attr('stroke-width', 1)
             .attr('state-click', true)
-            .style('opacity', 0.8)
+            .style('opacity', 0.5)
             .style('stroke', 'black')
           //  .style('stroke', function(d) {
            //   return stroke_color(region_by_code[d.properties.state_code]);
             //})
             .style('fill', function(d) {
-              return stroke_color(region_by_code[d.properties.state_code]);
+              return stroke_color(region_by_code[d.properties.state_code].region);
             })
             .attr('class', function(d) {
-              return 'region-' + region_by_code[d.properties.state_code];
+              return 'region-' + region_by_code[d.properties.state_code].name;
             })
 
             .on('mouseover', function(d) {
-              d3.selectAll('.region-' + region_by_code[d.properties.state_code]).transition().duration(300).style('opacity', 1);
+              d3.selectAll('.region-' + region_by_code[d.properties.state_code].name).transition().duration(300).style('opacity', 1);
               div.transition().duration(300).style('opacity', 1)
               .style('left', (d3.event.pageX + 10) + 'px')
               .style('top', (d3.event.pageY - 55) + 'px');
 
               title.text(d.properties.state_name);
-              content_div.text('Region: ' + region_by_code[d.properties.state_code]);
+              content_div.text('Region: ' + region_by_code[d.properties.state_code].name);
             })
 
             .on('mousemove', function(d) {
@@ -139,12 +144,12 @@ conaforApp.directive('map', function($http) {
             })
 
             .on('mouseout', function(d) {
-              d3.selectAll('.region-' + region_by_code[d.properties.state_code]).transition().duration(300).style('opacity', 0.8);
+              d3.selectAll('.region-' + region_by_code[d.properties.state_code].name).transition().duration(300).style('opacity', 0.5);
               div.transition().duration(300).style('opacity', 0);
             })
 
             .on('click', function(d, i) {
-              d.properties.region = region_by_code[d.properties.state_code];
+              d.properties.region = region_by_code[d.properties.state_code].name;
               return scope.onClick({item: d.properties});
             });
           }
@@ -164,8 +169,8 @@ conaforApp.directive('map', function($http) {
             })
             .attr("width", ls_w)
             .attr("height", ls_h)
-            .style("fill", function(d, i) { return color(d); })
-            .style("opacity", 0.8);
+            .style("fill", function(d, i) { return stroke_color(d); })
+            .style("opacity", 0.5);
 
           legend.append("text")
             .attr("x", 50)

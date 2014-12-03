@@ -84,7 +84,8 @@ get '/total_solicitado/summary/:code/*.*' do
     }},
     { "$group" => {
       _id: { 
-        region: "$region"
+        region: "$region",
+        name: "$region_name"
       },
       total: {
         "$sum" => "$monto_solicitado"
@@ -121,6 +122,7 @@ get '/total_solicitado/*.*' do
     { "$group" => {
       _id: { 
         code: "$code",
+        name: "$region_name",
         region: "$region"
       },
       total: {

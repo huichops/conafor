@@ -1,5 +1,15 @@
 div.btn-group 
   button.btn.btn-success.dropdown-toggle type='button' data-toggle='dropdown' aria-expanded='false'
+    | Clasificación Apoyo
+    span.caret
+  ul.dropdown-menu#year-filter role='menu'
+    li
+      a(ng-click='monto()' href) Todos 
+    li ng-repeat='grupo in grupos'
+      a(ng-click='monto("grupo_tipo_apoyo", grupo)' href) 
+        | {{grupo}}
+div.btn-group 
+  button.btn.btn-success.dropdown-toggle type='button' data-toggle='dropdown' aria-expanded='false'
     | Tipo
     span.caret
   ul.dropdown-menu#tipo-filter role='menu'
