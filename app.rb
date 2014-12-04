@@ -61,7 +61,7 @@ get '/cantidad_solicitado/summary/:code' do
   settings.mongo_db['listados'] 
   .aggregate([ 
     { "$match" => {
-      code: params[:code].to_i
+      region: params[:code].to_i
     }},
     { "$group" => {
       _id: {
@@ -146,6 +146,22 @@ get '/total_solicitado/*.*' do
       name.to_sym => value
     }})
   end
+
+  settings.mongo_db['listados'] 
+  .aggregate(query).to_a.to_json
+end
+
+get '/region_by_code' do
+  content_type :json
+
+  query = [ 
+    { "$group" => {
+      _id: { 
+        name: "$region_name",
+        code: "$code",
+        region: "$region"
+      }
+    }}]
 
   settings.mongo_db['listados'] 
   .aggregate(query).to_a.to_json

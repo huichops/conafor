@@ -102,8 +102,8 @@ conaforApp.directive('map', function($http) {
           function build_map(err, mx) {
             data.forEach(function(d) {
               mount_by_code[d._id.code] = (d[field]);
-              region_by_code[d._id.code] = d._id;
             });
+            console.log(region_by_code);
 
             var states = topojson.feature(mx, mx.objects.states).features;
             if (err) return console.error(err);
@@ -149,33 +149,47 @@ conaforApp.directive('map', function($http) {
             })
 
             .on('click', function(d, i) {
-              d.properties.region = region_by_code[d.properties.state_code].name;
+              d.properties.region = region_by_code[d.properties.state_code].region;
+              d.properties.name = region_by_code[d.properties.state_code].name;
               return scope.onClick({item: d.properties});
             });
           }
-          d3.json('mx_tj.json', build_map);
 
-          var legend = svg.selectAll("g.legend")
-            .data(color_domain)
-            .enter().append("g")
-            .attr("class", "legend");
+          $http.get('/region_by_code')
+          .success(function(data, status, headers, config) {
+            data.forEach(function(e) {
+              region_by_code[e._id.code] = e._id; 
+            });
+            d3.json('mx_tj.json', build_map);
+            var legend = svg.selectAll("g.legend")
+              .data(color_domain)
+              .enter().append("g")
+              .attr("class", "legend");
 
-          var ls_w = 20, ls_h = 20;
+            var ls_w = 20, ls_h = 20;
 
-          legend.append("rect")
-            .attr("x", 20)
-            .attr("y", function(d, i){ 
-              return height - (i*ls_h) - 2*ls_h;
-            })
-            .attr("width", ls_w)
-            .attr("height", ls_h)
-            .style("fill", function(d, i) { return stroke_color(d); })
-            .style("opacity", 0.5);
+            legend.append("rect")
+              .attr("x", 20)
+              .attr("y", function(d, i){ 
+                return height - (i*ls_h) - 2*ls_h;
+              })
+              .attr("width", ls_w)
+              .attr("height", ls_h)
+              .style("fill", function(d, i) { return stroke_color(d); })
+              .style("opacity", 0.5);
 
-          legend.append("text")
-            .attr("x", 50)
-            .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
-            .text(function(d, i){ return legend_labels[i]; });
+            legend.append("text")
+              .attr("x", 50)
+              .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
+              .text(function(d, i){ return legend_labels[i]; });
+              /*$timeout(function() {
+                angular.element('#year-filter').trigger('click');
+              });*/
+          })
+          .error(function(data, status, headers, config) {
+            console.log('DAMN');
+          });
+
 
         };
       }
