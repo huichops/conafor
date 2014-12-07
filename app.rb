@@ -19,6 +19,10 @@ get '/templates/*.html' do |name|
   slim name.to_sym, layout: false
 end
 
+get '/download/:name' do |name|
+  send_file "./public/files/#{name}", filename: name, type: "Application/octet-stream"
+end
+
 get '/hello' do
   "Hello World!"
 end
@@ -167,6 +171,22 @@ get '/region_by_code' do
   .aggregate(query).to_a.to_json
 end
 
+get '/grupo_apoyo_region' do
+  content_type :json
+
+  query = [ 
+    { "$group" => {
+      _id: { 
+        name: "$region_name",
+        region: "$region",
+      },
+      sum: { "$sum" =>  1 }
+    }}]
+
+  settings.mongo_db['listados'] 
+  .aggregate(query).to_a.to_json
+end
+
 get '/:estado' do
   content_type :json
 
@@ -176,4 +196,3 @@ get '/:estado' do
 
   settings.mongo_db['listados'].find(query).limit(100).to_a.to_json
 end
-

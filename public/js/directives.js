@@ -27,6 +27,99 @@ conaforApp.directive('summary', function($http) {
   }
 });
 
+conaforApp.directive('graph', function($http) {
+    return {
+      restrict: 'EA',
+      replace: false,
+      scope: { 
+        data: '=',
+        onClick: '&'
+      },
+      link: function(scope, element, attrs) {
+
+        var width = 960,
+            height = 500,
+            padding_v= 50,
+            padding_h= 200,
+            svg = d3.select(element[0]).append('svg');
+
+        svg.attr('width', width + padding_h).attr('height', height + padding_v);
+
+        scope.$watch('data', function(newVal, oldVal) {
+          return scope.render(newVal);
+        }, true);
+
+        scope.render = function(data) {
+          svg.selectAll('*').remove();
+          if (!data) return;
+
+          //console.log(data);
+          var div = d3.select('body').append('div')   
+             .attr('class', 'tip')               
+             .style('opacity', 0);
+
+          var title = div.append('h4');
+          var x = d3.scale.ordinal()
+            .rangeRoundBands( [50, width], .1, .3);
+
+          var y = d3.scale.linear()
+            .range( [height, 0] );
+          
+          x.domain(data.map(function(d) { return d._id.name; })); 
+          y.domain( [0, d3.max(data, function(d) { return d.sum; })]);
+
+          var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient('bottom');
+
+          var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient('left')
+            .ticks(5);
+
+          svg.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(0,' + (height + 5) + ')')
+            .call(xAxis);
+
+          svg.append('g')
+            .attr('class', 'y axis')
+            .attr('transform', 'translate(' + 80 + ',0)')
+            .call(yAxis);
+
+
+          svg.selectAll('.bar')
+            .data(data)
+          .enter().append('rect')
+          .attr('class', 'bar')
+          .attr('x', function(d) { return x(d._id.name); })
+          .attr('width', x.rangeBand())
+          .attr('y', function(d) { return y(d.sum); })
+          .attr('height', function(d) { return height - y(d.sum); })
+          .on('mouseover', function(d) {
+            div.transition().duration(300).style('opacity', 1)
+            .style('stroke', '#111')
+            .style('left', (d3.event.pageX + 10) + 'px')
+            .style('top', (d3.event.pageY - 35) + 'px');
+
+            title.text(d.sum);
+          })
+          .on('mousemove', function(d) {
+            div
+            .style('left', (d3.event.pageX + 10) + 'px')
+            .style('top', (d3.event.pageY - 35) + 'px')
+          })
+
+          .on('mouseout', function(d) {
+            div.transition().duration(300)
+            .style('stroke', '#333')
+            .style('opacity', 0);
+          })
+
+        };
+      }
+    };
+  });
 conaforApp.directive('map', function($http) {
     return {
       restrict: 'EA',
@@ -60,7 +153,7 @@ conaforApp.directive('map', function($http) {
 
           //var stroke_colors = ['#EEEEEE', '#13E140', '#00C22B', '#00881E', '#006115', '#022B0B'];
           var stroke_colors = ['#EEEEEE', '#FFF57E', '#FFDC7E', '#FFCB80', '#FFA97E', '#FF807E'];
-          var stroke_range = [0, 1, 2, 3 ,4, 5 ,6];
+          var stroke_range = [0, 1, 2, 3, 4, 5, 6];
           var color_domain = stroke_range;
           var legend_labels = ['Otra', 'Norte', 'Centro-Occidente', 'Centro-Oriente', 'Sur', 'Sureste', 'Noreste'];
 
@@ -116,7 +209,7 @@ conaforApp.directive('map', function($http) {
             .attr('stroke-width', 1)
             .attr('state-click', true)
             .style('opacity', 0.5)
-            .style('stroke', 'black')
+            .style('stroke', '#333')
           //  .style('stroke', function(d) {
            //   return stroke_color(region_by_code[d.properties.state_code]);
             //})
@@ -130,6 +223,7 @@ conaforApp.directive('map', function($http) {
             .on('mouseover', function(d) {
               d3.selectAll('.region-' + region_by_code[d.properties.state_code].name).transition().duration(300).style('opacity', 1);
               div.transition().duration(300).style('opacity', 1)
+              .style('stroke', '#111')
               .style('left', (d3.event.pageX + 10) + 'px')
               .style('top', (d3.event.pageY - 55) + 'px');
 
@@ -145,7 +239,9 @@ conaforApp.directive('map', function($http) {
 
             .on('mouseout', function(d) {
               d3.selectAll('.region-' + region_by_code[d.properties.state_code].name).transition().duration(300).style('opacity', 0.5);
-              div.transition().duration(300).style('opacity', 0);
+              div.transition().duration(300)
+              .style('stroke', '#333')
+              .style('opacity', 0);
             })
 
             .on('click', function(d, i) {
