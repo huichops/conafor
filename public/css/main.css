@@ -27,14 +27,17 @@ div.tip {
 }
 
 .bar {
-  fill: steelblue;
+  fill: #336699;
+  transition: 0.3s ease all;
+  opacity: 0.8;
 }
 
 .bar:hover {
-  fill: black;
+  opacity: 1;
 }
 
 .axis { 
+  font-family: Georgia, sans-serif;
   font-size: 16px;
 }
 

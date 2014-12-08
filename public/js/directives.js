@@ -1,3 +1,7 @@
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 function calcThreshold(array, field, step) {
   var amount,
       domain = [], 
@@ -102,7 +106,8 @@ conaforApp.directive('graph', function($http) {
             .style('left', (d3.event.pageX + 10) + 'px')
             .style('top', (d3.event.pageY - 35) + 'px');
 
-            title.text(d.sum);
+            withCommas = numberWithCommas(d.sum);
+            title.text(withCommas + ' montos');
           })
           .on('mousemove', function(d) {
             div

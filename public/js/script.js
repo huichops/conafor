@@ -30,11 +30,9 @@ conaforApp.config(function($routeProvider) {
     });
 });
 
-
 conaforApp.controller('graphCtrl', function($scope, $http) {
   $http.get('/grupo_apoyo_region')
   .success(function(data, status, headers, config) {
-    console.log(data);
     $scope.data = data;
   }).error(function(data, status, headers, config) {
     // yolo
@@ -57,7 +55,7 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) {
   $scope.estado = 'Selecciona un región';
   function reset() {
       $scope.estado = 'Selecciona una región';
-      $scope.results.length = 0;
+      $scope.results = {};
   }
   $scope.message = 'Total Montos Solicitados';
   $scope.date = '2009 - 2013';
@@ -89,7 +87,7 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) {
 
   // WARNING!!
   // SOLO CAMPOS NUMERICOS 
-  $scope.results = [];
+  $scope.results = {};
 
   $scope.count = function() {
     reset();
@@ -144,21 +142,25 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) {
       console.log($scope.filter, $scope.filter_val);
       $http.get($scope.url + '/summary/' + item.region + '/' + $scope.filter + '.' + $scope.filter_val)
       .success(function(data, status, headers, config) {
-        $scope.results.length = 0;
-        $scope.estado = 'Region: ' + item.name;
+        $scope.results = {};
+        $scope.estado = 'Región ' + item.name;
           
-        angular.forEach($scope.fields, function(value, key) {
-          if (data[value.name]) {
-            withCommas = numberWithCommas(data[value.name].toFixed());
-          } else {
-            withCommas = 0;
-          }
-            
-          $scope.results.push({
-              show: value.show, 
-              value: withCommas
+        angular.forEach(data, function(v, k) {
+          $scope.results[v.fecha] = [];
+          angular.forEach($scope.fields, function(field, key) {
+            if (v[field.name]) {
+              withCommas = numberWithCommas(v[field.name].toFixed());
+            } else {
+              withCommas = 0;
+            }
+              
+            $scope.results[v.fecha].push({
+                show: field.show, 
+                value: withCommas
+            });
           });
         });
+        console.log($scope.results);
         /*$scope.avg = numberWithCommas('$' + data.avg.toFixed());
         $scope.total = numberWithCommas('$' + data.total.toFixed());*/
       })

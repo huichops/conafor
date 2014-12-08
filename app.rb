@@ -89,7 +89,8 @@ get '/total_solicitado/summary/:code/*.*' do
     { "$group" => {
       _id: { 
         region: "$region",
-        name: "$region_name"
+        name: "$region_name",
+        fecha: "$fecha"
       },
       total: {
         "$sum" => "$monto_solicitado"
@@ -103,6 +104,13 @@ get '/total_solicitado/summary/:code/*.*' do
     }},
     { "$sort" => {
       total: 1
+    }},
+    { "$project" => {
+      fecha: "$_id.fecha",
+      total: "$total",
+      promedio: "$promedio",
+      cantidad: "$cantidad",
+      _id: 0
     }}
   ]
 
@@ -114,7 +122,7 @@ get '/total_solicitado/summary/:code/*.*' do
   end
 
   settings.mongo_db['listados'] 
-  .aggregate(query).to_a.first.to_json
+  .aggregate(query).to_a.to_json
 end
 
 get '/total_solicitado/*.*' do

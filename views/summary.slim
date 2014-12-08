@@ -1,10 +1,13 @@
-div.panel.panel-info
-  div.panel-heading
-    h4
-      | {{estado}}
-  table.table.table-hover
-    tr ng-repeat="result in results"
-      td.active
-        | {{result.show}}
-      td
-        | {{result.value}}
+h3
+  | {{estado}}
+div.panel-group#accordion role="tablist" aria-multiselectable="true"
+  div.panel.panel-info ng-repeat="(year, info) in results" 
+    div.panel-heading role="tab" id="{{ 'heading' + year}}"
+      h4.panel-title
+        | {{year}}
+    table.table
+      tr ng-repeat="result in info"
+        td.active
+          | {{result.show}}
+        td
+          | {{result.value}}
