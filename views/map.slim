@@ -20,24 +20,14 @@ div.btn-group
         | {{tipo}}
 div.btn-group 
   button.btn.btn-success.dropdown-toggle type='button' data-toggle='dropdown' aria-expanded='false'
-    | Sexo
+    | Tipo Persona
     span.caret
   ul.dropdown-menu#year-filter role='menu'
     li
       a(ng-click='monto()' href) Todos 
-    li ng-repeat='sexo in sexos'
-      a(ng-click='monto("sexo", sexo)' href) 
-        | {{sexo}}
-div.btn-group 
-  button.btn.btn-success.dropdown-toggle type='button' data-toggle='dropdown' aria-expanded='false'
-    | Año
-    span.caret
-  ul.dropdown-menu#year-filter role='menu'
-    li
-      a(ng-click='monto()' href) Todos 
-    li ng-repeat='year in years'
-      a(ng-click='monto("fecha", year)' href) 
-        | {{year}}
+    li ng-repeat='persona in personas'
+      a(ng-click='monto("tipo_solicitante", persona)' href) 
+        | {{persona}}
 h1
   | {{message}}
   strong

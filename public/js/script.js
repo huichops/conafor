@@ -31,12 +31,20 @@ conaforApp.config(function($routeProvider) {
 });
 
 conaforApp.controller('graphCtrl', function($scope, $http) {
-  $http.get('/grupo_apoyo_region')
-  .success(function(data, status, headers, config) {
-    $scope.data = data;
-  }).error(function(data, status, headers, config) {
-    // yolo
-  });
+  $scope.cantidad = function(filter, name) {
+    filter = filter || 'none';
+
+    $scope.filter = filter;
+
+    $http.get( '/by/' + filter)
+    .success(function(data, status, headers, config) {
+      $scope.data = data;
+    })
+    .error(function(data, status, headers, config) {
+      console.log('DAMN');
+    });
+  };
+  $scope.cantidad('region_name');
 });
 
 conaforApp.controller('aboutCtrl', function($scope, $http) {
@@ -63,9 +71,9 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) {
   .success(function(data, status, headers, config) {
     $scope.grupos = data;
   })
-  $http.get('/get_domain/sexo')
+  $http.get('/get_domain/tipo_solicitante')
   .success(function(data, status, headers, config) {
-    $scope.sexos = data;
+    $scope.personas = data;
   })
   .error(function(data, status, headers, config) {
     console.log('DAMN');
@@ -73,13 +81,6 @@ conaforApp.controller('eje1Ctrl', function($scope, $http) {
   $http.get('/get_domain/tipo')
   .success(function(data, status, headers, config) {
     $scope.tipos = data;
-  })
-  .error(function(data, status, headers, config) {
-    console.log('DAMN');
-  });
-  $http.get('/get_domain/fecha')
-  .success(function(data, status, headers, config) {
-    $scope.years = data;
   })
   .error(function(data, status, headers, config) {
     console.log('DAMN');

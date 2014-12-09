@@ -179,6 +179,24 @@ get '/region_by_code' do
   .aggregate(query).to_a.to_json
 end
 
+get '/by/:filter' do |filter|
+  content_type :json
+
+  query = [ 
+    { "$group" => {
+      _id: { 
+        filter: "$#{filter}" 
+      },
+      sum: { "$sum" =>  1 }
+    }},
+    { "$sort" => {
+      "_id.filter":  1
+    }}]
+
+  settings.mongo_db['listados'] 
+  .aggregate(query).to_a.to_json
+end
+
 get '/grupo_apoyo_region' do
   content_type :json
 

@@ -50,3 +50,7 @@ div.tip {
 .x.axis path {
   display: none;
 }
+
+.push-top {
+  margin-top: 30px;
+}

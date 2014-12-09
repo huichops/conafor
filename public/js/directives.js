@@ -67,9 +67,9 @@ conaforApp.directive('graph', function($http) {
             .rangeRoundBands( [50, width], .1, .3);
 
           var y = d3.scale.linear()
-            .range( [height, 0] );
+            .range( [height, 50] );
           
-          x.domain(data.map(function(d) { return d._id.name; })); 
+          x.domain(data.map(function(d) { return d._id.filter; })); 
           y.domain( [0, d3.max(data, function(d) { return d.sum; })]);
 
           var xAxis = d3.svg.axis()
@@ -96,7 +96,7 @@ conaforApp.directive('graph', function($http) {
             .data(data)
           .enter().append('rect')
           .attr('class', 'bar')
-          .attr('x', function(d) { return x(d._id.name); })
+          .attr('x', function(d) { return x(d._id.filter); })
           .attr('width', x.rangeBand())
           .attr('y', function(d) { return y(d.sum); })
           .attr('height', function(d) { return height - y(d.sum); })
